@@ -1,5 +1,6 @@
 .caContainer{
     width: 250px;
+    margin: 5px;
 }
 .caImgContainer{
     width: 240px;
@@ -8,14 +9,17 @@
     position: relative;
 }
 .caImgContainer > img{
+    margin: 5px;
     max-width: 100%;
     max-height: 300px;
 }
 .caProductName{
+    margin: 5px;
     font-size: 12px;
     padding: 10px 0;
 }
 .caProductPrice{
+    margin: 5px;
     font-size: 12px;
     font-weight: 600;
 }

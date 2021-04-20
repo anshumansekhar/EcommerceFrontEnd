@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import './style.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllCategory } from '../../actions';
+import { Nav, Navbar } from 'react-bootstrap';
 
 /**
 * @author
@@ -17,6 +18,9 @@ const MenuHeader = (props) => {
     dispatch(getAllCategory());
   }, []);
 
+  const goToCategory=(link)=>{
+    window.location=link;
+  }
 
   const renderCategories = (categories) => {
     let myCategories = [];
@@ -24,13 +28,12 @@ const MenuHeader = (props) => {
       myCategories.push(
         <li key={category.name}>
           {
-            category.parentId ? <a
-              href={`/${category.slug}?cid=${category._id}&type=${category.type}`}>
-              {category.name}
-            </a> :
-            <span>{category.name}</span>
+            <button className="button"
+            onClick={()=>goToCategory(`/${category.slug}?cid=${category._id}`)}>
+            {category.name}
+            </button >
           }
-          {category.children.length > 0 ? (<ul>{renderCategories(category.children)}</ul>) : null}
+          {/* {category.children.length > 0 ? (<ul>{renderCategories(category.children)}</ul>) : null} */}
         </li>
       );
     }

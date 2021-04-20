@@ -13,7 +13,7 @@ import "./style.css";
 
 const ProductListPage = (props) => {
   const renderProduct = () => {
-    console.log(props);
+    console.log("props:"+JSON.stringify(props));
     const params = getParams(props.location.search);
     let content = null;
     switch (params.type) {

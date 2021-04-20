@@ -80,6 +80,8 @@ export default (state = initState, action) => {
                 ...initState
             }
             break;
+        default:
+            break;
     }
 
     return state;

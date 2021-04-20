@@ -10,12 +10,25 @@ export const getProductsBySlug = (slug) => {
                 payload: res.data
             });
         } else {
-            // dispatch({
-            //     type: 
-            // })
+           
         }
     }
 }
+export const getProducts = () => {
+    return async dispatch => {
+        const res = await axios.post(`/product/getProducts`);
+        if (res.status === 200) {
+            console.log(res.data)
+            dispatch({
+                type: productConstants.GET_PRODUCTS_BY_SLUG,
+                payload: res.data
+            });
+        } else {
+           
+        }
+    }
+}
+
 
 export const getProductPage = (payload) => {
     return async dispatch => {

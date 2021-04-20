@@ -1,34 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { getProductsBySlug } from "../../../actions";
-import Card from "../../../components/UI/Card";
+import { getProducts } from "../../../actions";
 import { BiRupee } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import Card from "../../../components/UI/Card";
 import {generatePublicUrl} from "../../../urlConfig";
 
-import "./style.css";
 
 /**
- * @author
- * @function ClothingAndAccessories
- **/
+* @author
+* @function ALLProducts
+**/
 
-const ClothingAndAccessories = (props) => {
-  const product = useSelector((state) => state.product);
-  const dispatch = useDispatch();
+const ALLProducts = (props) => {
+    const product = useSelector((state) => state.product);
+    const dispatch = useDispatch();
 
-  useEffect(() => {
-    const { match } = props;
-    dispatch(getProductsBySlug(match.params.slug));
-  }, []);
-
-  return (
-    <div style={{ padding: "10px" }}>
+    useEffect(() => {
+        dispatch(getProducts());
+    }, []);
+    return (
+        <div style={{ padding: "10px" }}>
       <Card
         style={{
           boxSizing: "border-box",
           padding: "10px",
           display: "flex",
+          flexWrap:"wrap"
         }}
       >
         {product.products.map((product) => (
@@ -37,7 +35,7 @@ const ClothingAndAccessories = (props) => {
             <Link
               className="caImgContainer"
               to={`/${product.slug}/${product._id}/p`} >
-              <img src={generatePublicUrl(product.productPictures[0].img)} alt="product"/>
+              <img src={generatePublicUrl(product.productPictures[0].img)} style={{minHeight: "300px"}} alt="product"/>
             </Link>
             <div>
               <div className="caProductName">{product.name}</div>
@@ -52,7 +50,8 @@ const ClothingAndAccessories = (props) => {
       </Card>
 
     </div>
-  );
-};
+    )
 
-export default ClothingAndAccessories;
+}
+
+export default ALLProducts

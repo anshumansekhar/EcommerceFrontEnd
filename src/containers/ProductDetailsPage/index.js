@@ -8,6 +8,8 @@ import { AiFillThunderbolt } from "react-icons/ai";
 import { MaterialButton } from "../../components/MaterialUI";
 import "./style.css";
 import { addToCart } from "../../actions";
+import { generatePublicUrl } from "../../urlConfig";
+
 
 /**
  * @author
@@ -41,14 +43,14 @@ const ProductDetailsPage = (props) => {
           <div className="verticalImageStack">
             {product.productDetails.productPictures.map((thumb, index) => (
               <div className="thumbnail">
-                <img src={thumb.img} alt={thumb.img} />
+                <img src={generatePublicUrl(thumb.img)} alt={thumb.img} />
               </div>
             ))}
           </div>
           <div className="productDescContainer">
             <div className="productDescImgContainer">
               <img
-                src={product.productDetails.productPictures[0].img}
+                src={generatePublicUrl(product.productDetails.productPictures[0].img)}
                 alt={`${product.productDetails.productPictures[0].img}`}
               />
             </div>
@@ -87,15 +89,7 @@ const ProductDetailsPage = (props) => {
           <div className="breed">
             <ul>
               <li>
-                <a href="#">Home</a>
-                <IoIosArrowForward />
-              </li>
-              <li>
-                <a href="#">Mobiles</a>
-                <IoIosArrowForward />
-              </li>
-              <li>
-                <a href="#">Samsung</a>
+                <a href="#">{product.productDetails.category}</a>
                 <IoIosArrowForward />
               </li>
               <li>
@@ -106,7 +100,7 @@ const ProductDetailsPage = (props) => {
           {/* product description */}
           <div className="productDetails">
             <p className="productTitle">{product.productDetails.name}</p>
-            <div>
+            {/* <div>
               <span className="ratingCount">
                 4.3 <IoIosStar />
               </span>
@@ -117,7 +111,7 @@ const ProductDetailsPage = (props) => {
             <div className="extraOffer">
               Extra <BiRupee />
               4500 off{" "}
-            </div>
+            </div> */}
             <div className="flexRow priceContainer">
               <span className="price">
                 <BiRupee />
@@ -129,15 +123,6 @@ const ProductDetailsPage = (props) => {
               {/* <span>i</span> */}
             </div>
             <div>
-              <p
-                style={{
-                  color: "#212121",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                }}
-              >
-                Available Offers
-              </p>
               <p style={{ display: "flex" }}>
                 <span
                   style={{
@@ -157,6 +142,27 @@ const ProductDetailsPage = (props) => {
                   }}
                 >
                   {product.productDetails.description}
+                </span>
+              </p>
+              <p style={{ display: "flex" }}>
+                <span
+                  style={{
+                    width: "100px",
+                    fontSize: "12px",
+                    color: "#878787",
+                    fontWeight: "600",
+                    marginRight: "20px",
+                  }}
+                >
+                  Author
+                </span>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    color: "#212121",
+                  }}
+                >
+                  {product.productDetails.author}
                 </span>
               </p>
             </div>

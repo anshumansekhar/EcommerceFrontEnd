@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addOrder, getAddress, getCartItems } from "../../actions";
+import { addOrder, getAddress, getCartItems, createOrder } from "../../actions";
 import Layout from "../../components/Layout";
 import {
   Anchor,
@@ -11,6 +11,7 @@ import PriceDetails from "../../components/PriceDetails";
 import Card from "../../components/UI/Card";
 import CartPage from "../CartPage";
 import AddressForm from "./AddressForm";
+
 
 import "./style.css";
 
@@ -87,7 +88,7 @@ const Address = ({
             withoutLayout={true}
             onSubmitForm={onAddressSubmit}
             initialData={adr}
-            onCancel={() => {}}
+            onCancel={() => { }}
           />
         )}
       </div>
@@ -98,6 +99,7 @@ const Address = ({
 const CheckoutPage = (props) => {
   const user = useSelector((state) => state.user);
   const auth = useSelector((state) => state.auth);
+  const razorOrder = useSelector((state) => state.razorOrder);
   const [newAddress, setNewAddress] = useState(false);
   const [address, setAddress] = useState([]);
   const [confirmAddress, setConfirmAddress] = useState(false);
@@ -108,6 +110,16 @@ const CheckoutPage = (props) => {
   const [confirmOrder, setConfirmOrder] = useState(false);
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const [paymentType, setPaymentType] = useState('');
+
+
+  useEffect(() => {
+    if (razorOrder.orderCreated) {
+      console.log("Created");
+      document.getElementById('payNowBtn').style.visibility = "visible";
+      document.getElementById('confirmOrderBtn').style.visibility = "hidden";
+    }
+  }, [razorOrder.orderCreated]);
 
   const onAddressSubmit = (addr) => {
     setSelectedAddress(addr);
@@ -143,6 +155,56 @@ const CheckoutPage = (props) => {
     setOrderSummary(false);
     setPaymentOption(true);
   };
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function openRazorPay() {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+
+    const options = {
+      key: "rzp_test_bA0NvSvPXu0UIX", // Enter the Key ID generated from the Dashboard
+      amount: 10000,
+      currency: "INR",
+      name: "You Shop, We Ship",
+      description: "",
+      image: null,
+      order_id: razorOrder.order.id,
+      "handler": function (response) {
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature)
+      },
+      notes: {
+        address: "You Shop,We Ship Corporate Office",
+      },
+      theme: {
+        color: "#61dafb",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  }
+
 
   const onConfirmOrder = () => {
     const totalAmount = Object.keys(cart.cartItems).reduce(
@@ -157,16 +219,27 @@ const CheckoutPage = (props) => {
       payablePrice: cart.cartItems[key].price,
       purchasedQty: cart.cartItems[key].qty,
     }));
-    const payload = {
-      addressId: selectedAddress._id,
-      totalAmount,
-      items,
-      paymentStatus: "pending",
-      paymentType: "cod",
-    };
-
-    console.log(payload);
-    dispatch(addOrder(payload));
+    if (paymentType === 'cod') {
+      const payload = {
+        addressId: selectedAddress._id,
+        totalAmount,
+        items,
+        paymentStatus: "pending",
+        paymentType: "cod",
+      };
+      console.log(payload);
+      dispatch(addOrder(payload));
+    } else {
+      const payload = {
+        addressId: selectedAddress._id,
+        totalAmount:totalAmount*100,
+        items,
+        paymentStatus: "pending",
+        paymentType: "razorpay",
+      };
+      console.log(payload);
+      dispatch(createOrder(payload));
+    }
     setConfirmOrder(true);
   };
 
@@ -238,7 +311,7 @@ const CheckoutPage = (props) => {
 
           {/* AddressForm */}
           {confirmAddress ? null : newAddress ? (
-            <AddressForm onSubmitForm={onAddressSubmit} onCancel={() => {}} />
+            <AddressForm onSubmitForm={onAddressSubmit} onCancel={() => { }} />
           ) : auth.authenticate ? (
             <CheckoutStep
               stepNumber={"+"}
@@ -305,15 +378,28 @@ const CheckoutPage = (props) => {
                       padding: "20px",
                     }}
                   >
-                    <input type="radio" name="paymentOption" value="cod" />
+                    <input type="radio" name="paymentOption" value="cod" onChange={(e) => setPaymentType(e.target.value)} />
                     <div>Cash on delivery</div>
+                    <input type="radio" name="paymentOption" value="razorpay" />
+                    <div>Razorpay</div>
                   </div>
                   <MaterialButton
                     title="CONFIRM ORDER"
+                    id="confirmOrderBtn"
                     onClick={onConfirmOrder}
                     style={{
                       width: "200px",
                       margin: "0 0 20px 20px",
+                    }}
+                  />
+                  <MaterialButton
+                    id="payNowBtn"
+                    title="PAY NOW"
+                    onClick={openRazorPay}
+                    style={{
+                      width: "200px",
+                      margin: "0 0 20px 20px",
+                      visibility: "hidden"
                     }}
                   />
                 </div>

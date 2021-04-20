@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./style.css";
 
 /**
- * @author Rizwan Khan
+ * @author Anshuman Sekhar Dash
  * @function
  **/
 
@@ -82,6 +82,7 @@ const MaterialButton = (props) => {
   };
   return (
     <div
+      id={props.id}
       style={{
         width: "100%",
         ...props.style,

@@ -1,4 +1,4 @@
-import { cartConstants, userConstants } from "./constants";
+import { cartConstants, razorPayOrderConstants, userConstants } from "./constants";
 import axios from "../helpers/axios";
 
 export const getAddress = () => {
@@ -53,7 +53,30 @@ export const addAddress = (payload) => {
     }
   };
 };
-
+export const createOrder=(payload)=>{
+  return async (dispatch) => {
+    try {
+      const res = await axios.post(`/createOrder`, payload);
+      dispatch({ type: razorPayOrderConstants.RAZORPAY_ORDER_REQUEST });
+      if (res.status === 200) {
+        console.log(res.data);
+        const  order  = res.data;
+        dispatch({
+          type: razorPayOrderConstants.RAZORPAY_ORDER_SUCCESS,
+          payload: { ...order },
+        });
+      } else {
+        // const { error } = res.data;
+        // dispatch({
+        //   type: userConstants.ADD_USER_ORDER_FAILURE,
+        //   payload: { error },
+        // });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
 export const addOrder = (payload) => {
   return async (dispatch) => {
     try {

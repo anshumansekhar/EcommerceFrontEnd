@@ -13,6 +13,12 @@ const initState = {
 
 export default (state = initState, action) => {
   switch (action.type) {
+    case productConstants.GET_ALL_PRODUCTS:
+      state = {
+        ...state,
+        products: action.payload.products,
+      };
+      break;
     case productConstants.GET_PRODUCTS_BY_SLUG:
       state = {
         ...state,
